@@ -1,4 +1,3 @@
-import PvP from "./chess/PvP";
 import "./App.css";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import PageNotFound from "./pages/PageNotFound";
@@ -7,6 +6,7 @@ import Home from "./pages/Home";
 import Register from "./components/Register";
 import Reset from "./components/Reset";
 import Dashboard from "./components/Dashboard";
+import PvP from "./chess/PvP";
 
 const App = () => {
   return (
@@ -19,7 +19,9 @@ const App = () => {
           <Route path="/home" exact element={<Home />} />
           <Route path="/reset" exact element={<Reset />} />
           <Route path="/dashboard" exact element={<Dashboard />} />
-          {/* <Route path="/signup" exact element={<SignUp />} /> */}
+          <Route path="/game/:gameid" exact>
+            
+          </Route>
           <Route path="/pvp" exact element={<PvP />} />
           <Route path="*" element={<PageNotFound />} />
         </Routes>

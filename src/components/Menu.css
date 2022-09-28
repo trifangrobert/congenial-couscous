@@ -1,34 +1,54 @@
 .menu-container {
-    display: flex;
-    flex-direction: column;
-    width: 30%;
-    align-items: center;
-    justify-content: center;
-    position: absolute;
-    top: 30%;
-    left: 35%;
-    row-gap: 20px;
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 30%;
+  left: 35%;
+  row-gap: 20px;
 }
 
-.menu-button {
-    font-size: 2em;
-    width: 10em;
-    height: 2em;
-    border-radius: 15px;
-    background-color: #f0d9b5;
+.create-button {
+  font-size: 1.5em;
+  width: 12em;
+  height: 2em;
+  border-radius: 15px;
+  background-color: #f0d9b5;
 }
 
-.menu-button:hover {
-    background-color: #b58863;
+.create-button:hover {
+  background-color: #b58863;
 }
 
-input[type=text] {
-    border:none;
-    border-bottom: 2px solid lightgrey;
-    background-color: white;
+.join-button {
+  font-size: 1em;
+  width: 10em;
+  height: 2.5em;
+  border-radius: 12px;
+  background-color: #f0d9b5;
+}
+
+.join-button:hover {
+  background-color: #b58863;
 }
 
 .welcome {
-    color: #e0e0e0;
-    font-size: 2.3em;
+  color: #e0e0e0;
+  font-size: 2.3em;
+}
+
+.join-link {
+  background-color: white;
+  border-radius: 12px;
+  text-align: center;
+  width: 15em;
+  height: 2.5em;
+}
+
+.join-room {
+  display: flex;
+  flex-direction: row;
+  column-gap: 1em;
 }

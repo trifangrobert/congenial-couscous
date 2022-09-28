@@ -8,6 +8,7 @@ import { uuidv4 } from "@firebase/util";
 import { socket } from "../connection/socket";
 
 const Menu = () => {
+  const [code, setCode] = useState("");
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Menu = () => {
     }
   };
   useEffect(() => {
+    if (error) console.log(error);
     if (loading) return;
     if (!user) return navigate("/");
     fetchUserName();
@@ -31,13 +33,32 @@ const Menu = () => {
   const handleCreateRoom = () => {
     const newGameRoomId = uuidv4();
     console.log(newGameRoomId);
-    socket.emit('createNewGame', name, newGameRoomId);
-  }
+    socket.emit("createRoom", {name: name, roomId: newGameRoomId});
+    navigate("/game/" + newGameRoomId);
+  };
+  
+  const handleJoinRoom = () => {
+    socket.emit("joinRoom", {name: name, roomId: code});
+    navigate("/game/" + code);
+  };
   return (
     <div className="menu-container">
       <div className="welcome">Welcome to chess, {name}!</div>
-      <button className="menu-button" onClick={handleCreateRoom}>Create Room</button>
-      <button className="menu-button">Join Room</button>
+      <button className="create-button" onClick={handleCreateRoom}>
+        Create a room
+      </button>
+      <div className="join-room">
+        <input
+          className="join-link"
+          type="text"
+          placeholder="Room's code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+        />
+        <button className="join-button" onClick={handleJoinRoom}>
+          Join
+        </button>
+      </div>
     </div>
   );
 };

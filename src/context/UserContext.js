@@ -1,10 +1,14 @@
-import React, { Children } from "react";
-import { useContext, createContext } from "react";
+import React from "react";
+import { createContext } from "react";
 
-export const UserContext = createContext();
+export const UserContext = createContext({draggable: false});
 
-const UserProvider = ({ children }) => {
-  return <UserContext.Provider>{children}</UserContext.Provider>;
+const UserProvider = (props) => {
+  return (
+    <UserContext.Provider value={props.value}>
+      {props.children}
+    </UserContext.Provider>
+  );
 };
 
 export default UserProvider;

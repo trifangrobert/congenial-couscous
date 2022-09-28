@@ -1,15 +1,28 @@
 import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
+import { useEffect } from "react";
 import { useState } from "react";
+import { socket } from "../connection/socket";
 import "./PvP.css";
 
 const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 const game = new Chess(startFen);
 
 const PvP = () => {
+  const [play, setPlay] = useState(false);
+  const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
   // const [squareStyles, setSquareStyles] = useState({'e2': {backgroundColor: 'orange'}});
   const [squareStyles, setSquareStyles] = useState();
+  useEffect(() => {
+    socket.on("startGame", (data) => {
+      if (data.play) {
+        console.log("Game started");
+        setPlay(true);
+        setOrientation(data.orientation);
+      }
+    });
+  }, [socket]);
   const getKingPositionInCheck = (game) => {
     let kingPosition;
     for (let i = 0; i < 8; ++i) {
@@ -65,7 +78,6 @@ const PvP = () => {
         background:
           "radial-gradient(ellipse at center, red 0%, #e70000 25%, rgba(169,0,0,0) 89%, rgba(158,0,0,0) 100%)",
       };
-      // newStyles[kingPosition] = {background: "red"}
     }
     setSquareStyles((prevSquareStyles) => ({
       ...newStyles,
@@ -75,6 +87,9 @@ const PvP = () => {
     setSquareStyles({});
   };
   const handleOnMouseOverSquare = (square) => {
+    if (!play) {
+      return;
+    }
     removeHighlightSquare();
     highlightSquare(square);
   };
@@ -85,6 +100,8 @@ const PvP = () => {
         onDrop={handleOnDrop}
         onMouseOverSquare={handleOnMouseOverSquare}
         squareStyles={squareStyles}
+        draggable={play}
+        orientation={orientation}
       />
     </div>
   );

@@ -9,9 +9,13 @@ var mySocketId
 
 
 socket.on("createNewGame", statusUpdate => {
-    console.log(statusUpdate);
+    console.log("statusUpdate", statusUpdate);
     console.log("A new game has been created! Username: " + statusUpdate.userName + ", Game id: " + statusUpdate.gameId + " Socket id: " + statusUpdate.mySocketId)
     mySocketId = statusUpdate.mySocketId
+})
+
+socket.on("status", message =>  {
+    console.log(message);
 })
 
 export {

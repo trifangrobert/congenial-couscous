@@ -6,7 +6,8 @@ import { socket } from "../connection/socket";
 import "./PvP.css";
 
 const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-const game = new Chess(startFen);
+let game = new Chess(startFen);
+let playerColor;
 
 const PvP = () => {
   const [play, setPlay] = useState(false);
@@ -20,7 +21,14 @@ const PvP = () => {
         console.log("Game started");
         setPlay(true);
         setOrientation(data.orientation);
+        playerColor = data.orientation[0];
+        console.log(playerColor);
       }
+    }); 
+    socket.on("newMove", (data) => {
+      console.log("Move received", data.fen);
+      setPosition(data.fen);
+      game = new Chess(data.fen);
     });
   }, [socket]);
   const getKingPositionInCheck = (game) => {
@@ -42,6 +50,11 @@ const PvP = () => {
   };
   const handleOnDrop = ({ sourceSquare, targetSquare }) => {
     // console.log("handle on drop");
+    
+    if (game.turn() !== playerColor) {
+      console.log("Not your turn");
+      return;
+    }
     let move = game.move({
       from: sourceSquare,
       to: targetSquare,
@@ -50,6 +63,7 @@ const PvP = () => {
     // illegal move
     if (move === null) return;
     setPosition(game.fen());
+    socket.emit("newMove", {fen: game.fen()});
     removeHighlightSquare();
     if (game.game_over()) {
       console.log("game over!");
@@ -87,7 +101,7 @@ const PvP = () => {
     setSquareStyles({});
   };
   const handleOnMouseOverSquare = (square) => {
-    if (!play) {
+    if (!play || game.turn() !== playerColor) {
       return;
     }
     removeHighlightSquare();
@@ -95,6 +109,7 @@ const PvP = () => {
   };
   return (
     <div className="chess-container">
+      {position}
       <Chessboard
         position={position}
         onDrop={handleOnDrop}

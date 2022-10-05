@@ -32,7 +32,7 @@ const Menu = () => {
 
   const handleCreateRoom = () => {
     const newGameRoomId = uuidv4();
-    console.log(newGameRoomId);
+    // console.log(newGameRoomId);
     socket.emit("createRoom", {name: name, roomId: newGameRoomId});
     navigate("/game/" + newGameRoomId);
   };

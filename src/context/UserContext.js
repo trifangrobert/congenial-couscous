@@ -1,14 +1,18 @@
-import React from "react";
-import { createContext } from "react";
+import React, { createContext, useContext, useMemo, useState } from "react";
 
-export const UserContext = createContext({draggable: false});
+export const UserContext = createContext({
+  ingame: false,
+  setIngame: () => {},
+});
+export const useUser = () => {
+  return useContext(UserContext);
+};
 
-const UserProvider = (props) => {
-  return (
-    <UserContext.Provider value={props.value}>
-      {props.children}
-    </UserContext.Provider>
-  );
+const UserProvider = ({ children }) => {
+  const [ingame, setIngame] = useState(false);
+  const value = useMemo(() => ({ ingame, setIngame }), [ingame]);
+
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export default UserProvider;

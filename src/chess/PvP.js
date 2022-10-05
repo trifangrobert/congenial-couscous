@@ -1,15 +1,16 @@
 import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useState, useEffect, setContext, useContext } from "react";
 import { socket } from "../connection/socket";
 import "./PvP.css";
+import { UserContext } from "../context/UserContext";
 
 const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 let game = new Chess(startFen);
 let playerColor;
 
 const PvP = () => {
+  const {ingame, setIngame} = useContext(UserContext);
   const [play, setPlay] = useState(false);
   const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
@@ -23,6 +24,7 @@ const PvP = () => {
         setOrientation(data.orientation);
         playerColor = data.orientation[0];
         console.log(playerColor);
+        setIngame(true);
       }
     }); 
     socket.on("newMove", (data) => {
@@ -109,7 +111,6 @@ const PvP = () => {
   };
   return (
     <div className="chess-container">
-      {position}
       <Chessboard
         position={position}
         onDrop={handleOnDrop}

@@ -2,8 +2,7 @@ import "./App.css";
 import {
   Route,
   Routes,
-  BrowserRouter as Router,
-  useParams,
+  BrowserRouter as Router
 } from "react-router-dom";
 import PageNotFound from "./pages/PageNotFound";
 import Login from "./components/Login";

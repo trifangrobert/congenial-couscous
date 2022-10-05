@@ -1,12 +1,16 @@
 import { useParams } from "react-router-dom";
 import PvP from "../chess/PvP";
 import JoinLink from "../components/JoinLink";
+import { UserContext } from "../context/UserContext";
+import { useContext } from "react";
 
 const Game = () => {
   const { gameid } = useParams();
+  const { ingame } = useContext(UserContext);
   return (
     <>
-      <JoinLink link={gameid}></JoinLink>
+      <PvP />
+      {!ingame && <JoinLink gameid={gameid} />}
       <PvP />
     </>
   );

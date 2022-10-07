@@ -1,13 +1,15 @@
 import "./Menu.css";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { socket } from "../connection/socket";
+import { UserContext } from "../context/UserContext";
 
 const Menu = () => {
+  const { setIngame } = useContext(UserContext);
   const [code, setCode] = useState("");
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -33,6 +35,7 @@ const Menu = () => {
   const handleCreateRoom = () => {
     const newGameRoomId = uuidv4();
     // console.log(newGameRoomId);
+    setIngame(false);
     socket.emit("createRoom", {name: name, roomId: newGameRoomId});
     navigate("/game/" + newGameRoomId);
   };

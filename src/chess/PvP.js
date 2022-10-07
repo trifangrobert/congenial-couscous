@@ -1,6 +1,6 @@
 import { Chess } from "chess.js";
 import Chessboard from "chessboardjsx";
-import { useState, useEffect, setContext, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { socket } from "../connection/socket";
 import "./PvP.css";
 import { UserContext } from "../context/UserContext";
@@ -10,8 +10,8 @@ let game = new Chess(startFen);
 let playerColor;
 
 const PvP = () => {
-  const {ingame, setIngame} = useContext(UserContext);
-  const [play, setPlay] = useState(false);
+  const [ play, setPlay ] = useState(false);
+  const { ingame, setIngame } = useContext(UserContext);
   const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
   // const [squareStyles, setSquareStyles] = useState({'e2': {backgroundColor: 'orange'}});
@@ -20,17 +20,21 @@ const PvP = () => {
     socket.on("startGame", (data) => {
       if (data.play) {
         console.log("Game started");
+        setIngame(true);
         setPlay(true);
         setOrientation(data.orientation);
         playerColor = data.orientation[0];
-        console.log(playerColor);
-        setIngame(true);
+        console.log(play);
       }
-    }); 
+    });
     socket.on("newMove", (data) => {
       console.log("Move received", data.fen);
       setPosition(data.fen);
       game = new Chess(data.fen);
+    });
+    socket.on("gameOver", (data) => {
+      console.log(data.message);
+      setPlay(false);
     });
   }, [socket]);
   const getKingPositionInCheck = (game) => {
@@ -52,7 +56,7 @@ const PvP = () => {
   };
   const handleOnDrop = ({ sourceSquare, targetSquare }) => {
     // console.log("handle on drop");
-    
+
     if (game.turn() !== playerColor) {
       console.log("Not your turn");
       return;
@@ -65,11 +69,26 @@ const PvP = () => {
     // illegal move
     if (move === null) return;
     setPosition(game.fen());
-    socket.emit("newMove", {fen: game.fen()});
+    socket.emit("newMove", { fen: game.fen() });
     removeHighlightSquare();
+    hightlightKingInCheck(game);
+    setSquareStyles((prevSquareStyles) => ({
+      ...hightlightKingInCheck(game),
+    }));
     if (game.game_over()) {
-      console.log("game over!");
+      socket.emit("gameOver");
     }
+  };
+  const hightlightKingInCheck = (game) => {
+    let newStyles = {}, kingPosition = getKingPositionInCheck(game);
+    console.log("status", kingPosition, game.in_check());
+    if (game.in_check()) {
+      newStyles[kingPosition] = {
+        background:
+          "radial-gradient(ellipse at center, red 0%, #e70000 25%, rgba(169,0,0,0) 89%, rgba(158,0,0,0) 100%)",
+      };
+    }
+    return newStyles;
   };
   const highlightSquare = (square) => {
     let moves = game.moves({ square: square, verbose: true });
@@ -88,13 +107,9 @@ const PvP = () => {
     if (game.get(square) === null || game.get(square).color !== game.turn()) {
       newStyles = {};
     }
-    let kingPosition = getKingPositionInCheck(game);
-    if (game.in_check()) {
-      newStyles[kingPosition] = {
-        background:
-          "radial-gradient(ellipse at center, red 0%, #e70000 25%, rgba(169,0,0,0) 89%, rgba(158,0,0,0) 100%)",
-      };
-    }
+
+    newStyles = { ...newStyles, ...hightlightKingInCheck(game) };
+    console.log("newStyles", newStyles);
     setSquareStyles((prevSquareStyles) => ({
       ...newStyles,
     }));
@@ -103,7 +118,7 @@ const PvP = () => {
     setSquareStyles({});
   };
   const handleOnMouseOverSquare = (square) => {
-    if (!play || game.turn() !== playerColor) {
+    if (!ingame || game.turn() !== playerColor) {
       return;
     }
     removeHighlightSquare();

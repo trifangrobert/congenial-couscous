@@ -1,0 +1,17 @@
+.user-data {
+  color: #f0d9b5;
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  bottom: -2em;
+  left: 35%;
+}
+
+.opponent-data {
+  color: #f0d9b5;
+  font-size: 20px;
+  font-weight: bold;
+  position: absolute;
+  top: -2em;
+  left: 35%;
+}

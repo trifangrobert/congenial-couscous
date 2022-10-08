@@ -9,8 +9,8 @@ const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 let game = new Chess(startFen);
 let playerColor;
 
-const PvP = () => {
-  const [ play, setPlay ] = useState(false);
+const PvP = (props) => {
+  const [play, setPlay] = useState(false);
   const { ingame, setIngame } = useContext(UserContext);
   const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
@@ -80,7 +80,8 @@ const PvP = () => {
     }
   };
   const hightlightKingInCheck = (game) => {
-    let newStyles = {}, kingPosition = getKingPositionInCheck(game);
+    let newStyles = {},
+      kingPosition = getKingPositionInCheck(game);
     console.log("status", kingPosition, game.in_check());
     if (game.in_check()) {
       newStyles[kingPosition] = {
@@ -91,6 +92,7 @@ const PvP = () => {
     return newStyles;
   };
   const highlightSquare = (square) => {
+    if (game.game_over()) return;
     let moves = game.moves({ square: square, verbose: true });
     // console.log(square, moves, typeof(square));
     let newStyles = {};
@@ -125,7 +127,7 @@ const PvP = () => {
     highlightSquare(square);
   };
   return (
-    <div className="chess-container">
+    <div className="chess-container"> 
       <Chessboard
         position={position}
         onDrop={handleOnDrop}
@@ -133,7 +135,9 @@ const PvP = () => {
         squareStyles={squareStyles}
         draggable={play}
         orientation={orientation}
-      />
+      >
+      </Chessboard>
+      {props.children}
     </div>
   );
 };

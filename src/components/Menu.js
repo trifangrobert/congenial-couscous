@@ -32,16 +32,37 @@ const Menu = () => {
     fetchUserName();
   }, [user, loading]);
 
-  const handleCreateRoom = () => {
+  const getElo = async (uid) => {
+    console.log(db);
+    const q = query(collection(db, "users"), where("uid", "==", uid));
+    const docs = await getDocs(q);
+    // console.log("current user elo", docs.docs[0].data().elo);
+    const res = docs.docs[0].data().elo;
+    console.log("res", res);
+    return res;
+  };
+  const handleCreateRoom = async () => {
     const newGameRoomId = uuidv4();
     // console.log(newGameRoomId);
     setIngame(false);
-    socket.emit("createRoom", {name: name, roomId: newGameRoomId});
+    const userElo = await getElo(auth.currentUser.uid);
+    console.log("user elo", userElo);
+    socket.emit("createRoom", {
+      name: name,
+      roomId: newGameRoomId,
+      elo: userElo,
+    });
     navigate("/game/" + newGameRoomId);
   };
-  
-  const handleJoinRoom = () => {
-    socket.emit("joinRoom", {name: name, roomId: code});
+
+  const handleJoinRoom = async () => {
+    const userElo = await getElo(auth.currentUser.uid);
+    console.log("user elo", userElo);
+    socket.emit("joinRoom", {
+      name: name,
+      roomId: code,
+      elo: userElo,
+    });
     navigate("/game/" + code);
   };
   return (

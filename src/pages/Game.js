@@ -10,18 +10,31 @@ const Game = () => {
   const { gameid } = useParams();
   const { ingame } = useContext(UserContext);
   const [opponentName, setOpponentName] = useState("");
+  const [opponentElo, setOpponentElo] = useState();
   const [userName, setUserName] = useState("");
+  const [userElo, setUserElo] = useState();
   useEffect(() => {
     socket.on("startGame", (data) => {
+      console.log(data);
       setOpponentName(data.opponentName);
+      setOpponentElo(data.opponentElo);
       setUserName(data.userName);
+      setUserElo(data.userElo);
     });
   }, [socket]);
   return (
     <>
       <PvP>
-        <div className="user-data">{userName} (1500)</div>
-        <div className="opponent-data">{opponentName} (1400)</div>
+        {userElo && (
+          <div className="user-data">
+            {userName} ({userElo})
+          </div>
+        )}
+        {opponentElo && (
+          <div className="opponent-data">
+            {opponentName} ({opponentElo})
+          </div>
+        )}
       </PvP>
       {!ingame && <JoinLink gameid={gameid} />}
     </>

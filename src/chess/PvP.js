@@ -14,6 +14,7 @@ const PvP = (props) => {
   const { ingame, setIngame } = useContext(UserContext);
   const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
+  const [finishedGame, setFinishedGame] = useState(false);
   // const [squareStyles, setSquareStyles] = useState({'e2': {backgroundColor: 'orange'}});
   const [squareStyles, setSquareStyles] = useState();
   useEffect(() => {
@@ -33,8 +34,9 @@ const PvP = (props) => {
       game = new Chess(data.fen);
     });
     socket.on("gameOver", (data) => {
-      console.log(data.message);
+      console.log("game ended from socket gameOver");
       setPlay(false);
+      setFinishedGame(true);
     });
   }, [socket]);
   const getKingPositionInCheck = (game) => {
@@ -127,7 +129,7 @@ const PvP = (props) => {
     highlightSquare(square);
   };
   return (
-    <div className="chess-container"> 
+    <div className={`chess-container ${finishedGame ? 'blur-chessboard' : ''}`}> 
       <Chessboard
         position={position}
         onDrop={handleOnDrop}

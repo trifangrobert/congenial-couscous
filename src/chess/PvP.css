@@ -7,3 +7,7 @@
   position: fixed;
   top: 20%;
 }
+
+.blur-chessboard {
+  filter: blur(8px);
+}

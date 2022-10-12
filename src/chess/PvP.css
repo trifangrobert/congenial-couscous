@@ -9,5 +9,15 @@
 }
 
 .blur-chessboard {
-  filter: blur(8px);
+  /* animation: blur 5s ease; */
+  /* animation-fill-mode: forwards; */
+}
+
+@keyframes blur {
+  0% {
+    filter: blur(0px);
+  }
+  100% {
+    filter: blur(8px);
+  }
 }

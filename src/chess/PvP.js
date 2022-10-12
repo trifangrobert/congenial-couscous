@@ -11,7 +11,7 @@ let playerColor;
 
 const PvP = (props) => {
   const [play, setPlay] = useState(false);
-  const { ingame, setIngame } = useContext(UserContext);
+  const { showCode, setShowCode } = useContext(UserContext);
   const [orientation, setOrientation] = useState("white");
   const [position, setPosition] = useState(startFen);
   const [finishedGame, setFinishedGame] = useState(false);
@@ -21,20 +21,35 @@ const PvP = (props) => {
     socket.on("startGame", (data) => {
       if (data.play) {
         console.log("Game started");
-        setIngame(true);
+        setShowCode(true);
         setPlay(true);
         setOrientation(data.orientation);
         playerColor = data.orientation[0];
-        console.log(play);
+        // console.log(play);
       }
     });
     socket.on("newMove", (data) => {
       console.log("Move received", data.fen);
       setPosition(data.fen);
       game = new Chess(data.fen);
+      console.log("newMove");
+      console.log("fen after gameOver", game.fen());
+      console.log("king position", getKingPositionInCheck(game));
+      console.log("is king in check?", game.in_check());
+      console.log(highlightKingInCheck(game));
+      setSquareStyles((prevSquareStyles) => ({
+        ...highlightKingInCheck(game),
+      }));
     });
     socket.on("gameOver", (data) => {
-      console.log("game ended from socket gameOver");
+      console.log("gameOver");
+      console.log("fen after gameOver", game.fen());
+      console.log("king position", getKingPositionInCheck(game));
+      console.log("is king in check?", game.in_check());
+      console.log(highlightKingInCheck(game));
+      setSquareStyles((prevSquareStyles) => ({
+        ...highlightKingInCheck(game),
+      }));
       setPlay(false);
       setFinishedGame(true);
     });
@@ -73,18 +88,17 @@ const PvP = (props) => {
     setPosition(game.fen());
     socket.emit("newMove", { fen: game.fen() });
     removeHighlightSquare();
-    hightlightKingInCheck(game);
-    setSquareStyles((prevSquareStyles) => ({
-      ...hightlightKingInCheck(game),
-    }));
+    // setSquareStyles((prevSquareStyles) => ({
+    //   ...highlightKingInCheck(game),
+    // }));
     if (game.game_over()) {
       socket.emit("gameOver");
     }
   };
-  const hightlightKingInCheck = (game) => {
+  const highlightKingInCheck = (game) => {
     let newStyles = {},
       kingPosition = getKingPositionInCheck(game);
-    console.log("status", kingPosition, game.in_check());
+    // console.log("status", kingPosition, game.in_check());
     if (game.in_check()) {
       newStyles[kingPosition] = {
         background:
@@ -112,7 +126,7 @@ const PvP = (props) => {
       newStyles = {};
     }
 
-    newStyles = { ...newStyles, ...hightlightKingInCheck(game) };
+    newStyles = { ...newStyles, ...highlightKingInCheck(game) };
     console.log("newStyles", newStyles);
     setSquareStyles((prevSquareStyles) => ({
       ...newStyles,
@@ -122,12 +136,13 @@ const PvP = (props) => {
     setSquareStyles({});
   };
   const handleOnMouseOverSquare = (square) => {
-    if (!ingame || game.turn() !== playerColor) {
+    if (!play || game.turn() !== playerColor) {
       return;
     }
     removeHighlightSquare();
     highlightSquare(square);
   };
+  console.log(squareStyles);
   return (
     <div className={`chess-container ${finishedGame ? 'blur-chessboard' : ''}`}> 
       <Chessboard

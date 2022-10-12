@@ -8,7 +8,7 @@ import "./Game.css";
 
 const Game = () => {
   const { gameid } = useParams();
-  const { ingame } = useContext(UserContext);
+  const { showCode } = useContext(UserContext);
   const [opponentName, setOpponentName] = useState("");
   const [opponentElo, setOpponentElo] = useState();
   const [userName, setUserName] = useState("");
@@ -36,7 +36,7 @@ const Game = () => {
           </div>
         )}
       </PvP>
-      {!ingame && <JoinLink gameid={gameid} />}
+      {!showCode && <JoinLink gameid={gameid} />}
     </>
   );
 };

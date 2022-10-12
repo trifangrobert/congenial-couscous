@@ -9,7 +9,7 @@ import { socket } from "../connection/socket";
 import { UserContext } from "../context/UserContext";
 
 const Menu = () => {
-  const { setIngame } = useContext(UserContext);
+  const { setShowCode } = useContext(UserContext);
   const [code, setCode] = useState("");
   const [user, loading, error] = useAuthState(auth);
   const [name, setName] = useState("");
@@ -44,7 +44,7 @@ const Menu = () => {
   const handleCreateRoom = async () => {
     const newGameRoomId = uuidv4();
     // console.log(newGameRoomId);
-    setIngame(false);
+    setShowCode(false);
     const userElo = await getElo(auth.currentUser.uid);
     console.log("user elo", userElo);
     socket.emit("createRoom", {

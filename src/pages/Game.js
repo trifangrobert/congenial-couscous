@@ -15,7 +15,6 @@ const Game = () => {
   const [userElo, setUserElo] = useState();
   useEffect(() => {
     socket.on("startGame", (data) => {
-      console.log(data);
       setOpponentName(data.opponentName);
       setOpponentElo(data.opponentElo);
       setUserName(data.userName);
@@ -24,7 +23,7 @@ const Game = () => {
   }, [socket]);
   return (
     <>
-      <PvP>
+      <PvP player1={userName} player2={opponentName}>
         {userElo && (
           <div className="user-data">
             {userName} ({userElo})

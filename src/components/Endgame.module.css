@@ -1,0 +1,32 @@
+.Modal {
+  background-color: #f0d9b5;
+}
+
+.p {
+  font-size: 40px;
+  display: flex;
+  justify-content: center;
+  font-family: Helvetica;
+  font-weight: bold;
+  color: #383635;
+}
+
+.button {
+  background-color: #383635;
+  color: white;
+  border-radius: 10px;
+  height: 75px;
+  width: 200px;
+  font-size: 30px;
+  box-shadow: 10px 10px 5px rgba(0, 0, 0, 0.5);
+}
+
+.button:hover {
+  background-color: #b58863;
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 100px;
+}

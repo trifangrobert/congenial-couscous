@@ -9,8 +9,8 @@
 }
 
 .blur-chessboard {
-  /* animation: blur 5s ease; */
-  /* animation-fill-mode: forwards; */
+  animation: blur 5s ease;
+  animation-fill-mode: forwards;
 }
 
 @keyframes blur {

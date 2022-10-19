@@ -3,6 +3,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../firebase";
+import { getElo } from "../firebase";
 import { query, collection, getDocs, where } from "firebase/firestore";
 import { uuidv4 } from "@firebase/util";
 import { socket } from "../connection/socket";
@@ -32,12 +33,6 @@ const Menu = () => {
     fetchUserName();
   }, [user, loading]);
 
-  const getElo = async (uid) => {
-    const q = query(collection(db, "users"), where("uid", "==", uid));
-    const docs = await getDocs(q);
-    const res = docs.docs[0].data().elo;
-    return res;
-  };
   const handleCreateRoom = async () => {
     const newGameRoomId = uuidv4();
     // console.log(newGameRoomId);

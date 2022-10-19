@@ -14,7 +14,7 @@ const Elo = (props) => {
   let K = props.K;
 
   if (score === 0) {
-    return [Ra, Rb];
+    return [Math.round(Ra), Math.round(Rb)];
   }
 
   let Pb = Probability(Ra, Rb);
@@ -28,7 +28,7 @@ const Elo = (props) => {
     Ra = Ra + K * (0 - Pa);
     Rb = Rb + K * (1 - Pb);
   }
-  return [Ra, Rb];
+  return [Math.round(Ra), Math.round(Rb)];
 };
 
 export default Elo;

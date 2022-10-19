@@ -105,6 +105,20 @@ const updateElo = async (uid, elo) => {
   }
 }
 
+const getElo = async (uid) => {
+  console.log("getElo called", uid);
+  try {
+    const q = query(collection(db, "users"), where("uid", "==", uid));
+    const docs = await getDocs(q);
+    if (docs.docs.length === 1) {
+      console.log(docs.docs[0].data().elo);
+      return docs.docs[0].data().elo;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return -1;
+} 
 
 export {
   auth,
@@ -115,4 +129,5 @@ export {
   sendPasswordReset,
   logout,
   updateElo,
+  getElo
 };

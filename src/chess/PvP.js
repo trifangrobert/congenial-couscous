@@ -70,35 +70,27 @@ const PvP = (props) => {
         score = 0;
       } else {
         if (game.turn() === "w") {
-          if (playerColor === "b") {
-            score = 1;
-          } else {
-            score = -1;
-          }
+          score = -1;
         } else {
-          if (playerColor === "w") {
-            score = 1;
-          } else {
-            score = -1;
-          }
+          score = 1;
         }
       }
       let player1_elo = data.whiteElo;
       let player2_elo = data.blackElo;
       console.log("Elo before game: ", player1_elo, player2_elo);
-      let newElo, _;
-      [newElo, _] = Elo({
+      [player1_elo, player2_elo] = Elo({
         player1_elo,
         player2_elo,
         score,
         K: 32,
       });
+      console.log("Elo after game: ", player1_elo, player2_elo);
       // console.log("New Elo", newElo);
-      // console.log("User", auth.currentUser);  
+      console.log("User", auth.currentUser.uid);
+      let newElo = playerColor === 'w' ? player1_elo : player2_elo;
       try {
         await updateElo(auth.currentUser.uid, newElo);
-      }
-      catch (error) {
+      } catch (error) {
         console.log(error);
       }
     });

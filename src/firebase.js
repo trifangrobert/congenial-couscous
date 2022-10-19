@@ -15,6 +15,7 @@ import {
   collection,
   where,
   addDoc,
+  updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -88,6 +89,23 @@ const sendPasswordReset = async (email) => {
 const logout = () => {
   signOut(auth);
 };
+
+const updateElo = async (uid, elo) => {
+  try {
+    const q = query(collection(db, "users"), where("uid", "==", uid));
+    const docs = await getDocs(q);
+    if (docs.docs.length === 1) {
+      await updateDoc(docs.docs[0].ref, {
+        elo,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  }
+}
+
+
 export {
   auth,
   db,
@@ -96,4 +114,5 @@ export {
   registerWithEmailAndPassword,
   sendPasswordReset,
   logout,
+  updateElo,
 };

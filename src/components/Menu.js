@@ -33,12 +33,9 @@ const Menu = () => {
   }, [user, loading]);
 
   const getElo = async (uid) => {
-    console.log(db);
     const q = query(collection(db, "users"), where("uid", "==", uid));
     const docs = await getDocs(q);
-    // console.log("current user elo", docs.docs[0].data().elo);
     const res = docs.docs[0].data().elo;
-    console.log("res", res);
     return res;
   };
   const handleCreateRoom = async () => {
@@ -46,7 +43,7 @@ const Menu = () => {
     // console.log(newGameRoomId);
     setShowCode(false);
     const userElo = await getElo(auth.currentUser.uid);
-    console.log("user elo", userElo);
+    // console.log("user elo", userElo);
     socket.emit("createRoom", {
       name: name,
       roomId: newGameRoomId,
@@ -57,7 +54,7 @@ const Menu = () => {
 
   const handleJoinRoom = async () => {
     const userElo = await getElo(auth.currentUser.uid);
-    console.log("user elo", userElo);
+    // console.log("user elo", userElo);
     socket.emit("joinRoom", {
       name: name,
       roomId: code,

@@ -6,6 +6,8 @@ import { socket } from "../connection/socket";
 import "./PvP.css";
 import { UserContext } from "../context/UserContext";
 import Endgame from "../components/Endgame";
+import { auth, updateElo } from "../firebase";
+import Elo from "../elo/Elo";
 
 const startFen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 let game = new Chess(startFen);
@@ -29,8 +31,6 @@ const PvP = (props) => {
         setPlay(true);
         setOrientation(data.orientation);
         playerColor = data.orientation[0];
-        // console.log(play);
-        // console.log(props)
       }
     });
     socket.on("newMove", (data) => {
@@ -41,7 +41,7 @@ const PvP = (props) => {
         ...highlightKingInCheck(game),
       }));
     });
-    socket.on("gameOver", (data) => {
+    socket.on("gameOver", async (data) => {
       setSquareStyles((prevSquareStyles) => ({
         ...highlightKingInCheck(game),
       }));
@@ -50,10 +50,8 @@ const PvP = (props) => {
       setShowModal(true);
       game = new Chess(data.fen);
       // console.log("game over from clients and data is:", data);
-      let score;
       if (game.in_checkmate()) {
         if (game.turn() === "w") {
-          // setMessage(`Checkmate! ${data.whitePlayer} wins!`);
           setMessage(`Checkmate! ${data.blackPlayer} wins!`);
         } else {
           setMessage(`Checkmate! ${data.whitePlayer} wins!`);
@@ -67,17 +65,42 @@ const PvP = (props) => {
       } else if (game.insufficient_material()) {
         setMessage("Insufficient material");
       }
+      let score;
       if (!game.in_checkmate()) {
-        return;
-      }
-      if (game.turn() === "w") {
-        if (playerColor === "b") {
-          score = 1;
+        score = 0;
+      } else {
+        if (game.turn() === "w") {
+          if (playerColor === "b") {
+            score = 1;
+          } else {
+            score = -1;
+          }
         } else {
-          score = -1;
+          if (playerColor === "w") {
+            score = 1;
+          } else {
+            score = -1;
+          }
         }
       }
-
+      let player1_elo = data.whiteElo;
+      let player2_elo = data.blackElo;
+      console.log("Elo before game: ", player1_elo, player2_elo);
+      let newElo, _;
+      [newElo, _] = Elo({
+        player1_elo,
+        player2_elo,
+        score,
+        K: 32,
+      });
+      // console.log("New Elo", newElo);
+      // console.log("User", auth.currentUser);  
+      try {
+        await updateElo(auth.currentUser.uid, newElo);
+      }
+      catch (error) {
+        console.log(error);
+      }
     });
   }, [socket]);
   const getKingPositionInCheck = (game) => {

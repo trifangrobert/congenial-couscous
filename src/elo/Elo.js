@@ -5,42 +5,6 @@ const Probability = (rating1, rating2) => {
   );
 };
 
-// Function to calculate Elo rating
-// K is a constant.
-// d determines whether Player A wins
-// or Player B.
-function EloRating(Ra, Rb, K, d) {
-  // To calculate the Winning
-  // Probability of Player B
-  let Pb = Probability(Ra, Rb);
-
-  // To calculate the Winning
-  // Probability of Player A
-  let Pa = Probability(Rb, Ra);
-
-  // Case 1 When Player A wins
-  // Updating the Elo Ratings
-  if (d === true) {
-    Ra = Ra + K * (1 - Pa);
-    Rb = Rb + K * (0 - Pb);
-  }
-
-  // Case 2 When Player B wins
-  // Updating the Elo Ratings
-  else {
-    Ra = Ra + K * (0 - Pa);
-    Rb = Rb + K * (1 - Pb);
-  }
-
-  document.write("Updated Ratings:-<br>");
-  document.write(
-    "Ra = " +
-      Math.round(Ra * 1000000.0) / 1000000.0 +
-      " Rb = " +
-      Math.round(Rb * 1000000.0) / 1000000.0
-  );
-}
-
 const Elo = (props) => {
   // score 1 if player1 won, -1 if player2 won, 0 if draw
   
